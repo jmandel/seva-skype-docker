@@ -1,10 +1,10 @@
-## To build the docker image
+## Build the docker image
 
 ```
 $ sudo docker build -t sevabot .
 ```
 
-## To configure the docker image
+## Configure the docker image
 
 Configure the container passing in a "secret" (sevabot password) + skype admin
 username:
@@ -28,8 +28,10 @@ sudo docker kill $CID
 sudo docker commit $CID sevabot
 ```
 
+
+## Run it!
 At this point you've got a configured image that you can launch via:
 
 ```
-sudo docker run -p 5000:5000 sevabot start
+sudo docker run -d -p 5000:5000 sevabot start
 ```
