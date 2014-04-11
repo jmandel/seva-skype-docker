@@ -11,8 +11,8 @@ username:
 
 ```
 sudo docker  run  -e secret=123456 -e skype_user=jcmandel  sevabot
-export CID= `sudo docker ps -l -q`
-export IP = `sudo docker inspect -format '{{ .NetworkSettings.IPAddress }}' $CID`
+export CID=`sudo docker ps -l -q`
+export IP=`sudo docker inspect -format '{{ .NetworkSettings.IPAddress }}' $CID`
 vncviewer $IP
 ```
 
@@ -31,5 +31,5 @@ sudo docker commit $CID sevabot
 At this point you've got a configured image that you can launch via:
 
 ```
-sudo docker run sevabot start
+sudo docker run -p 5000:5000 sevabot start
 ```
