@@ -5,9 +5,9 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" >  /etc/ap
 RUN apt-get update
 RUN apt-get install -y nano curl git
 RUN curl -L http://www.skype.com/go/getskype-linux-beta-ubuntu-64 -o skype-linux-beta.deb
-RUN git clone git://github.com/opensourcehacker/sevabot.git
+RUN git clone git://github.com/jmandel/sevabot.git
 RUN apt-get install -y python python-setuptools python-pip
-RUN (cd sevabot && python setup.py develop)
+RUN (cd sevabot && git checkout custom && python setup.py develop)
 RUN apt-get install -y  gdebi-core
 RUN gdebi --non-interactive skype-linux-beta.deb
 RUN apt-get install -y xvfb fluxbox python x11vnc dbus  libpython2.7 nano curl python-gobject-2 git  python-pip gcc-4.6-base:i386 iso-codes 
