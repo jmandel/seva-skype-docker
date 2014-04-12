@@ -10,7 +10,7 @@ Configure the container passing in a "secret" (sevabot password) + skype admin
 username:
 
 ```
-sudo docker  run  -e secret=123456 -e skype_user=jcmandel  sevabot
+sudo docker  run  -e secret=123456 -e skype_user=jcmandel -e mongo_url="mongodb://localhost/myapp"  sevabot
 export CID=`sudo docker ps -l -q`
 export IP=`sudo docker inspect -format '{{ .NetworkSettings.IPAddress }}' $CID`
 vncviewer $IP

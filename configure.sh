@@ -7,6 +7,7 @@ cp settings.py.example settings.py
 sed -i 's/koskela/'"$secret"'/' settings.py
 sed -i 's/oulu/'"$skype_user"'/' settings.py
 sed -i 's/localhost/0.0.0.0/' settings.py
+sed -i 's/{{mongo_url}}/'"$mongo_url"'/' settings.py
 
 Xvfb :1 -screen 0 800x600x16 &
 sleep 3
