@@ -17,11 +17,11 @@ start_date = "2014-06-01"
 chatnames = {
   '#lmckenzi/$grahamegrieve;da9763898aba4d78': {
     'title': 'Committers chat',
-    'slug': 'committers_chat'
+    'slug': 'committers'
   },
   '#ewoutkramer/$f6a8a0ea0abcc75d': {
     'title': 'Implementers Chat',
-    'slug': 'implementers_chat'
+    'slug': 'implementers'
   }
 }
 
@@ -46,11 +46,11 @@ for chatid, chat in chatnames.iteritems():
     #print json.dumps(posts, indent=2)
 
     fg = FeedGenerator()
-    fg.id('https://chats.fhir.me/feeds/%s.atom'%chat['slug'])
+    fg.id('https://chats.fhir.me/feeds/skype/%s.atom'%chat['slug'])
     fg.link(href='urn:skypechat:%s'%chatid, rel='related')
     fg.title('FHIR Skype %s'%chat['title'])
     fg.author( {'name':'FHIR Core Team','email':'fhir@lists.hl7.org'} )
-    fg.link(href='https://chats.fhir.me/feeds/%s.atom'%chat['slug'], rel='self')
+    fg.link(href='https://chats.fhir.me/feeds/skype/%s.atom'%chat['slug'], rel='self')
     fg.language('en')
 
     for praw in cur.fetchall():
@@ -71,7 +71,7 @@ for chatid, chat in chatnames.iteritems():
       #print body.encode('utf8')
 
       fe = fg.add_entry()
-      fe.id('https://chats.fhir.me/feeds/%s/messages/%s'%(chat['slug'], chathash))
+      fe.id('https://chats.fhir.me/feeds/skype/%s/messages/%s'%(chat['slug'], chathash))
       fe.author({'name': authorname, 'uri': 'urn:skypename:%s'%p['author']})
       fe.title('Message from %s'%authorname);
       fe.pubdate(p['timestamp'])
@@ -82,9 +82,9 @@ for chatid, chat in chatnames.iteritems():
       fe.content(body)
 
     try:
-      os.mkdir('static/feeds')
+      os.mkdir('static/feeds/skype')
     except: pass
 
-    fo = open("static/feeds/%s.atom"%chat['slug'], "w")
+    fo = open("static/feeds/skype/%s.atom"%chat['slug'], "w")
     print >>fo, fg.atom_str(pretty=True)
     fo.close()
