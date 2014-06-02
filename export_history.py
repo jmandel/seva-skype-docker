@@ -1,5 +1,6 @@
 import sqlite3
 import json
+import os
 import sys
 import re
 import md5
@@ -14,11 +15,11 @@ cur = c.cursor()
 start_date = "2014-06-01"
 
 chatnames = {
-  '#ewoutkramer/$f6a8a0ea0abcc75d': {
+  '#lmckenzi/$grahamegrieve;da9763898aba4d78': {
     'title': 'Committers chat',
     'slug': 'committers_chat'
   },
-  '#lmckenzi/$grahamegrieve;da9763898aba4d78': {
+  '#ewoutkramer/$f6a8a0ea0abcc75d': {
     'title': 'Implementers Chat',
     'slug': 'implementers_chat'
   }
@@ -39,17 +40,17 @@ for chatid, chat in chatnames.iteritems():
       datetime(timestamp, 'unixepoch', 'localtime') > date("%s") and
       chatname="%s" and
       body_xml not null
-      order by timestamp;
+      order by timestamp desc;
     """%(start_date, chatid))
     #posts = [dict(r) for r in cur.fetchall()]
     #print json.dumps(posts, indent=2)
 
     fg = FeedGenerator()
-    fg.id('https://chat.fhir.me/feeds/%s.rss'%chat['slug'])
+    fg.id('https://chats.fhir.me/feeds/%s.atom'%chat['slug'])
     fg.link(href='skype://%s'%chatid, rel='related')
     fg.title('FHIR Skype %s'%chat['title'])
     fg.author( {'name':'FHIR Core Team','email':'fhir@lists.hl7.org'} )
-    fg.link(href='https://chat.fhir.me/feeds/%s.atom'%chat['slug'], rel='self')
+    fg.link(href='https://chats.fhir.me/feeds/%s.atom'%chat['slug'], rel='self')
     fg.language('en')
 
     for praw in cur.fetchall():
@@ -70,7 +71,7 @@ for chatid, chat in chatnames.iteritems():
       #print body.encode('utf8')
 
       fe = fg.add_entry()
-      fe.id('https://chat.fhir.me/chats/%s/messages/%s'%(chat['slug'], chathash))
+      fe.id('https://chats.fhir.me/feeds/%s/messages/%s'%(chat['slug'], chathash))
       fe.author({'name': authorname, 'uri': 'skypeid:%s'%p['author']})
       fe.title('Message from %s'%authorname);
       fe.pubdate(p['timestamp'])
@@ -80,6 +81,10 @@ for chatid, chat in chatnames.iteritems():
         fe.updated(p['timestamp'])
       fe.content(body)
 
-    fo = open("%s.rss"%chat['slug'], "w")
+    try:
+      os.mkdir('static/feeds')
+    except: pass
+
+    fo = open("static/feeds/%s.atom"%chat['slug'], "w")
     print >>fo, fg.atom_str(pretty=True)
     fo.close()
