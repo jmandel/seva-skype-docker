@@ -104,7 +104,6 @@ for chatid, chat in chatnames.iteritems():
     with codecs.open("static/feeds/skype/%s.atom"%chat['slug'], "w", "utf-8") as fo:
       fo.write(fg.atom_str(pretty=True))
     
-    messages.reverse()
     with codecs.open("static/browsable/skype/%s.html"%chat['slug'], "w", "utf-8") as fo:
       fo.write(page.render({
         'chat_name': chat['title'],
