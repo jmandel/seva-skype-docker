@@ -1,0 +1,20 @@
+#logs {
+  padding-top: 150px;
+}
+
+
+.message {
+  font-size: 1.2em;
+  padding-bottom: 1em; 
+}
+
+.message .who {
+  color: #5f6e83;
+  padding-right: .3em;
+  font-weight: bold;
+}
+
+.message .when {
+  padding-right: .3em;
+  color: lightgray;
+}

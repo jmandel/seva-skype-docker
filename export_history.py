@@ -2,9 +2,12 @@ import sqlite3
 import json
 import os
 import sys
+import codecs
 import re
 import md5
+from xml.sax.saxutils import unescape, escape
 from feedgen.feed import FeedGenerator
+from jinja2 import Environment, FileSystemLoader
 
 # e.g. python export_history.py /home/jmandel/.Skype/jcmandel/main.db > export.json
 
@@ -25,6 +28,9 @@ chatnames = {
   }
 }
 
+template_env = Environment(loader=FileSystemLoader('templates'), autoescape=True)
+page = template_env.get_template('page.html')
+
 for chatid, chat in chatnames.iteritems():
     cur.execute("""
     SELECT
@@ -44,6 +50,8 @@ for chatid, chat in chatnames.iteritems():
     """%(start_date, chatid))
     #posts = [dict(r) for r in cur.fetchall()]
     #print json.dumps(posts, indent=2)
+
+    messages = []
 
     fg = FeedGenerator()
     fg.id('https://chats.fhir.me/feeds/skype/%s.atom'%chat['slug'])
@@ -66,9 +74,16 @@ for chatid, chat in chatnames.iteritems():
       m.update(json.dumps({'author': p['author'], 'timestamp': p['timestamp']}))
       chathash = m.hexdigest()
 
-      body = p['body_xml']
+      body = escape(p['body_xml'])
       body = re.sub("<quote>.*?</quote>", "", body)
-      #print body.encode('utf8')
+      body = re.sub("\n", "\n<br/>", body)
+      body = body
+
+      messages.append({
+        'who': authorname,
+        'when': p['timestamp'],
+        'what': unescape(body)
+      })
 
       fe = fg.add_entry()
       fe.id('https://chats.fhir.me/feeds/skype/%s/messages/%s'%(chat['slug'], chathash))
@@ -79,12 +94,22 @@ for chatid, chat in chatnames.iteritems():
         fe.updated(p['edited_timestamp'])
       else:
         fe.updated(p['timestamp'])
-      fe.content(body)
+      fe.content(body, type="html")
 
     try:
       os.mkdir('static/feeds/skype')
     except: pass
 
-    fo = open("static/feeds/skype/%s.atom"%chat['slug'], "w")
-    print >>fo, fg.atom_str(pretty=True)
-    fo.close()
+    with codecs.open("static/feeds/skype/%s.atom"%chat['slug'], "w", "utf-8") as fo:
+      fo.write(fg.atom_str(pretty=True))
+    
+    messages.reverse()
+    with codecs.open("static/browsable/skype/%s.html"%chat['slug'], "w", "utf-8") as fo:
+      fo.write(page.render({
+        'chat_name': chat['title'],
+        'messages': messages,
+        'slug': chat['slug'],
+        'other_chats': chatnames.values()
+      }))
+      print messages
+
