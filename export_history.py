@@ -59,6 +59,7 @@ for chatid, chat in chatnames.iteritems():
     fg.link(href='urn:skypechat:%s'%chatid, rel='related')
     fg.title('FHIR Skype %s'%chat['title'])
     fg.author( {'name':'FHIR Core Team','email':'fhir@lists.hl7.org'} )
+    fg.link(href='https://chats.fhir.me/feeds/skype/%s.json'%chat['slug'], rel='alternate')
     fg.link(href='https://chats.fhir.me/feeds/skype/%s.atom'%chat['slug'], rel='self')
     fg.language('en')
 
@@ -80,10 +81,16 @@ for chatid, chat in chatnames.iteritems():
       body = re.sub("\n", "\n<br/>", body)
       body = body
 
+      updated = p['timestamp']
+      if p['edited_timestamp']:
+        p['updated'] = p['edited_timestamp']
+
       messages.append({
-        'who': authorname,
-        'when': p['timestamp'],
-        'what': unescape(body)
+        'skypename': p['author'],
+        'author': authorname,
+        'timestamp': p['timestamp'],
+        'updated': updated,
+        'body': unescape(body)
       })
 
       fe = fg.add_entry()
@@ -91,10 +98,8 @@ for chatid, chat in chatnames.iteritems():
       fe.author({'name': authorname, 'uri': 'urn:skypename:%s'%p['author']})
       fe.title('Message from %s'%authorname);
       fe.pubdate(p['timestamp'])
-      if p['edited_timestamp']:
-        fe.updated(p['edited_timestamp'])
-      else:
-        fe.updated(p['timestamp'])
+
+      fe.updated(updated)
       fe.content(body, type="html")
 
     try:
@@ -103,7 +108,10 @@ for chatid, chat in chatnames.iteritems():
 
     with codecs.open("static/feeds/skype/%s.atom"%chat['slug'], "w", "utf-8") as fo:
       fo.write(fg.atom_str(pretty=True))
-    
+
+    with codecs.open("static/feeds/skype/%s.json"%chat['slug'], "w", "utf-8") as fo:
+      fo.write(json.dumps(messages, indent=2))
+     
     with codecs.open("static/browsable/skype/%s.html"%chat['slug'], "w", "utf-8") as fo:
       fo.write(page.render({
         'chat_name': chat['title'],
