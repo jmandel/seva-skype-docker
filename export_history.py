@@ -47,7 +47,7 @@ for chatid, chat in chatnames.iteritems():
 
     fg = FeedGenerator()
     fg.id('https://chats.fhir.me/feeds/%s.atom'%chat['slug'])
-    fg.link(href='skype://%s'%chatid, rel='related')
+    fg.link(href='urn:skypechat:%s'%chatid, rel='related')
     fg.title('FHIR Skype %s'%chat['title'])
     fg.author( {'name':'FHIR Core Team','email':'fhir@lists.hl7.org'} )
     fg.link(href='https://chats.fhir.me/feeds/%s.atom'%chat['slug'], rel='self')
@@ -72,7 +72,7 @@ for chatid, chat in chatnames.iteritems():
 
       fe = fg.add_entry()
       fe.id('https://chats.fhir.me/feeds/%s/messages/%s'%(chat['slug'], chathash))
-      fe.author({'name': authorname, 'uri': 'skypeid:%s'%p['author']})
+      fe.author({'name': authorname, 'uri': 'urn:skypeid:%s'%p['author']})
       fe.title('Message from %s'%authorname);
       fe.pubdate(p['timestamp'])
       if p['edited_timestamp']:
