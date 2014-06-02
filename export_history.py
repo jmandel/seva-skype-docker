@@ -18,7 +18,15 @@ cur = c.cursor()
 start_date = "2014-06-01"
 
 chatnames = {
-  '#lmckenzi/$grahamegrieve;da9763898aba4d78': {
+  '#lmckenzi/$rongparker;e7c030a920962f18': {
+    'title': 'Management Group',
+    'slug': 'fmg'
+  },
+  '#lynn.laakso/$2d87ce8eb2a6a791': {
+    'title': 'Governance Board',
+    'slug': 'fgb'
+  },
+   '#lmckenzi/$grahamegrieve;da9763898aba4d78': {
     'title': 'Committers chat',
     'slug': 'committers'
   },
