@@ -68,7 +68,7 @@ for chat in chats:
 
     fg = FeedGenerator()
     fg.id('https://chats.fhir.me/feeds/skype/%s.atom'%chat['slug'])
-    fg.link(href='https://chats.fhir.me/browsable/skype/%s.html'%chat['slug'], rel='alternate')
+    fg.link(href='https://chats.fhir.me/feeds/skype/%s.html'%chat['slug'], rel='alternate')
     fg.link(href='urn:skypechat:%s'%chatid, rel='related')
     fg.title('FHIR Skype Chat: %s'%chat['title'])
     fg.author( {'name':'FHIR Core Team','email':'fhir@lists.hl7.org'} )
@@ -125,7 +125,7 @@ for chat in chats:
     with codecs.open("static/feeds/skype/%s.json"%chat['slug'], "w", "utf-8") as fo:
       fo.write(json.dumps(messages, indent=2))
      
-    with codecs.open("static/browsable/skype/%s.html"%chat['slug'], "w", "utf-8") as fo:
+    with codecs.open("static/feeds/skype/%s.html"%chat['slug'], "w", "utf-8") as fo:
       fo.write(page.render({
         'chat_name': chat['title'],
         'messages': messages,
