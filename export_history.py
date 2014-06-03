@@ -17,29 +17,34 @@ cur = c.cursor()
 
 start_date = "2014-06-01"
 
-chatnames = {
-  '#lmckenzi/$rongparker;e7c030a920962f18': {
+chats = [
+  {
+     'id':  '#ewoutkramer/$f6a8a0ea0abcc75d',
+    'title': 'Implementers',
+    'slug': 'implementers'
+  },
+  {
+    'id':    '#lmckenzi/$grahamegrieve;da9763898aba4d78',
+    'title': 'Committers',
+    'slug': 'committers'
+  },
+  {
+    'id':   '#lmckenzi/$rongparker;e7c030a920962f18',
     'title': 'Management Group',
     'slug': 'fmg'
   },
-  '#lynn.laakso/$2d87ce8eb2a6a791': {
+  {
+    'id':   '#lynn.laakso/$2d87ce8eb2a6a791',
     'title': 'Governance Board',
     'slug': 'fgb'
   },
-   '#lmckenzi/$grahamegrieve;da9763898aba4d78': {
-    'title': 'Committers chat',
-    'slug': 'committers'
-  },
-  '#ewoutkramer/$f6a8a0ea0abcc75d': {
-    'title': 'Implementers Chat',
-    'slug': 'implementers'
-  }
-}
+]
 
 template_env = Environment(loader=FileSystemLoader('templates'), autoescape=True)
 page = template_env.get_template('page.html')
 
-for chatid, chat in chatnames.iteritems():
+for chat in chats:
+    chatid = chat['id']
     cur.execute("""
     SELECT
       author, 
@@ -65,7 +70,7 @@ for chatid, chat in chatnames.iteritems():
     fg.id('https://chats.fhir.me/feeds/skype/%s.atom'%chat['slug'])
     fg.link(href='https://chats.fhir.me/browsable/skype/%s.html'%chat['slug'], rel='alternate')
     fg.link(href='urn:skypechat:%s'%chatid, rel='related')
-    fg.title('FHIR Skype %s'%chat['title'])
+    fg.title('FHIR Skype Chat: %s'%chat['title'])
     fg.author( {'name':'FHIR Core Team','email':'fhir@lists.hl7.org'} )
     fg.link(href='https://chats.fhir.me/feeds/skype/%s.json'%chat['slug'], rel='alternate')
     fg.link(href='https://chats.fhir.me/feeds/skype/%s.atom'%chat['slug'], rel='self')
@@ -125,7 +130,7 @@ for chatid, chat in chatnames.iteritems():
         'chat_name': chat['title'],
         'messages': messages,
         'slug': chat['slug'],
-        'other_chats': chatnames.values()
+        'other_chats': chats
       }))
       print messages
 
