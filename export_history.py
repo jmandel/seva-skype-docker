@@ -132,5 +132,4 @@ for chat in chats:
         'slug': chat['slug'],
         'other_chats': chats
       }))
-      print messages
 
