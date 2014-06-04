@@ -26,9 +26,10 @@ parser.add_option("-o", "--output-dir",
         default="static",
         help="""Output directory""")
 
-
 (options, args) = parser.parse_args()
 print options
+
+start_date = "2014-06-01"
 
 if not options.skype_db:
     parser.print_help()
@@ -38,14 +39,11 @@ c = sqlite3.connect(options.skype_db)
 c.row_factory = sqlite3.Row
 cur = c.cursor()
 
-start_date = "2014-06-01"
-
 chats = json.load(open(options.chats_file))
-
 template_env = Environment(loader=FileSystemLoader('templates'), autoescape=True)
 page = template_env.get_template('page.html')
 
-for chat in chats:
+def generate_feeds(chat):
     print "Processing: %s"%chat['title']
     chatid = chat['id']
     cur.execute("""
@@ -111,7 +109,6 @@ for chat in chats:
         'body': unescape(body)
       })
 
-
       fe = fg.add_entry()
       fe.id('https://chats.fhir.me/feeds/skype/%s/messages/%s'%(chat['slug'], chathash))
       fe.author({'name': authorname, 'uri': 'urn:skypename:%s'%p['author']})
@@ -119,18 +116,6 @@ for chat in chats:
       fe.pubdate(p['timestamp'])
       fe.updated(updated)
       fe.content(body, type="html")
-
-    jg = {
-      p: getattr(fg, p)() for p in ["id", "link", "title", "author", "language"]
-    }
-    jg['entry'] = []
-
-    for fe in fg.entry():
-      jg['entry'].append({
-        p: getattr(fe, p)() for p in ["id", "author", "title", "pubdate", "updated", "content"]
-      })
-      jg['entry'][-1]['pubdate'] = jg['entry'][-1]['pubdate'].isoformat()
-      jg['entry'][-1]['updated'] = jg['entry'][-1]['updated'].isoformat()
 
     for d in [["feeds"], ["feeds", "skype"]]:
       try:
@@ -143,7 +128,7 @@ for chat in chats:
       fo.write(fg.atom_str(pretty=True))
 
     with codecs.open(chat_path+'.json', "w", "utf-8") as fo:
-      fo.write(json.dumps(jg, indent=2))
+      fo.write(json.dumps(feed_to_json(fg), indent=2))
      
     with codecs.open(chat_path+'.html', "w", "utf-8") as fo:
       fo.write(page.render({
@@ -152,3 +137,22 @@ for chat in chats:
         'slug': chat['slug'],
         'other_chats': chats
       }))
+
+
+def feed_to_json(f):
+    jg = {
+      p: getattr(f, p)() for p in ["id", "link", "title", "author", "language"]
+    }
+    jg['entry'] = []
+
+    for fe in f.entry():
+      jg['entry'].append({
+        p: getattr(fe, p)() for p in ["id", "author", "title", "pubdate", "updated", "content"]
+      })
+      jg['entry'][-1]['pubdate'] = jg['entry'][-1]['pubdate'].isoformat()
+      jg['entry'][-1]['updated'] = jg['entry'][-1]['updated'].isoformat()
+
+for chat in chats:
+    generate_feeds(chat)
+
+
