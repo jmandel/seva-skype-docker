@@ -69,10 +69,10 @@ def generate_feeds(chat):
 
   fg.id('https://chats.fhir.me/feeds/skype/%s.atom'%chat['slug'])
 
+  fg.link(href='https://chats.fhir.me/feeds/skype/%s.atom'%chat['slug'], rel='self')
+  fg.link(href='https://chats.fhir.me/feeds/skype/%s.json'%chat['slug'], rel='alternate')
   fg.link(href='https://chats.fhir.me/feeds/skype/%s.html'%chat['slug'], rel='alternate')
   fg.link(href='urn:skypechat:%s'%chatid, rel='related')
-  fg.link(href='https://chats.fhir.me/feeds/skype/%s.json'%chat['slug'], rel='alternate')
-  fg.link(href='https://chats.fhir.me/feeds/skype/%s.atom'%chat['slug'], rel='self')
 
   fg.title('FHIR Skype Chat: %s'%chat['title'])
 
@@ -143,6 +143,8 @@ def feed_to_json(f):
   jg = {
       p: getattr(f, p)() for p in ["id", "link", "title", "author", "language"]
       }
+  jg['link'][0]['href'] =  jg['link'][0]['href'].replace('atom', 'json')
+  jg['link'][1]['href'] =  jg['link'][1]['href'].replace('json', 'atom')
   jg['entry'] = []
 
   for fe in f.entry():
@@ -152,6 +154,7 @@ def feed_to_json(f):
     jg['entry'][-1]['content'] = jg['entry'][-1]['content']['content']
     jg['entry'][-1]['pubdate'] = jg['entry'][-1]['pubdate'].isoformat()
     jg['entry'][-1]['updated'] = jg['entry'][-1]['updated'].isoformat()
+    
   return jg
 
 for chat in chats:
