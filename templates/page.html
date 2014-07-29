@@ -67,8 +67,10 @@
       <div class="row">
         <div class="col-lg-10">
           {% for message in messages %}
-          <div class="message">
-            <span class="when">{{message.timestamp}}</span>
+          <div class="message" id="{{message.timestamp}}">
+            <a href="#{{message.timestamp}}" class="tslink">
+              <span class="when">{{message.timestamp}}</span>
+            </a>
             <span class="who">{{message.author}}: </span>
             {{message.body|safe}}
           </div>

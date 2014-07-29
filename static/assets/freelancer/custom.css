@@ -18,3 +18,8 @@
   padding-right: .3em;
   color: lightgray;
 }
+
+div.message{
+ padding-top: 130px;
+ margin-top: -130px;
+}
