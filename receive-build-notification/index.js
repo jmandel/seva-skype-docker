@@ -9,7 +9,10 @@ var messageForStatus = [ "Passed", "Fixed", "Broken", "Still Failing" ];
 var failedStatus = [ "Broken", "Still Failing" ];
 
 var server = http.createServer(function (req, response) {
-  if (req.url  !== "/notify/"+secret){
+
+  var auth = req.headers.authorization && req.headers.authorization.trim();
+  
+  if (req.url  !== "/notify/status" || auth !== secret){
     console.log('Bad secret on build notification');
     response.statusCode = 401;
     return response.end();
