@@ -4,6 +4,7 @@ var port = process.env.PORT || 5556;
 var secret = process.env.SECRET || "changeme";
 var sevaurl = process.env.SEVA_URL || "http://localhost:5000/message_unsigned/";
 var chatid = process.env.SEVA_CHAT || "a-chat-id";
+var decode = require('./decode');
 
 var messageForStatus = [ "Passed", "Fixed", "Broken", "Still Failing" ];
 var failedStatus = [ "Broken", "Still Failing" ];
@@ -23,7 +24,8 @@ var server = http.createServer(function (req, response) {
     data += chunk;
   });
   req.on('end',function(){
-    var n = JSON.parse(data);
+    var form = decodeForm(data);
+    var n = JSON.parse(form && form.payload);
     console.log("msg", n.status_message);
     if (messageForStatus.indexOf(n.status_message) !== -1) {
       var emote = ":-)";
