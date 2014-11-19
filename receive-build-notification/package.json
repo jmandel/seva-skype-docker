@@ -1,0 +1,14 @@
+{
+  "name": "receive-build-notification",
+  "version": "0.0.0",
+  "description": "Receive travis CI web hooks and forward to sevabot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "request": "~2.48.0"
+  }
+}
