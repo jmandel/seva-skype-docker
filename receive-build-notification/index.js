@@ -6,8 +6,8 @@ var sevaurl = process.env.SEVA_URL || "http://localhost:5000/message_unsigned/";
 var chatid = process.env.SEVA_CHAT || "a-chat-id";
 var decode = require('querystring').parse;
 
-var messageForStatus = [ "Fixed", "Broken", "Still Failing" ]; // not "Passed"
-var failedStatus = [ "Broken", "Still Failing" ];
+var messageForStatus = ["Passed", "Fixed", "Failed", "Broken", "Still Failing" ];
+var failedStatus = [ "Failed", "Broken", "Still Failing" ];
 
 var server = http.createServer(function (req, response) {
 
@@ -35,7 +35,7 @@ var server = http.createServer(function (req, response) {
     if (messageForStatus.indexOf(n.status_message) !== -1) {
       var emote = ":-)";
       if (failedStatus.indexOf(n.status_message) !== -1) {
-        emote = ":-(";
+        emote = ":-( " + n.build_url;
       }
       var message = "Build status: " + n.status_message + " " +
                     emote + " For commit " + svnrev + " by " + author;
