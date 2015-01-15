@@ -1,7 +1,6 @@
 FROM ubuntu:12.04
 MAINTAINER Josh Mandel "Joshua.Mandel@childrens.harvard.edu"
 
-RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" >  /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get install -y nano curl git
 RUN curl -L http://www.skype.com/go/getskype-linux-beta-ubuntu-64 -o skype-linux-beta.deb
