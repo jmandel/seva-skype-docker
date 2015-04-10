@@ -10,6 +10,22 @@ from feedgen.feed import FeedGenerator
 from jinja2 import Environment, FileSystemLoader
 from optparse import OptionParser
 
+from HTMLParser import HTMLParser
+
+class MLStripper(HTMLParser):
+    def __init__(self):
+        self.reset()
+        self.fed = []
+    def handle_data(self, d):
+        self.fed.append(d)
+    def get_data(self):
+        return ''.join(self.fed)
+
+def strip_tags(html):
+    s = MLStripper()
+    s.feed(html)
+    return s.get_data()
+
 parser = OptionParser()
 
 parser.add_option("-c", "--chats",
@@ -106,7 +122,7 @@ def generate_feeds(chat):
       'author': authorname,
       'timestamp': p['timestamp'],
       'updated': updated,
-      'body': unescape(body)
+      'body': strip_tags(unescape(body))
       })
 
     fe = fg.add_entry()
